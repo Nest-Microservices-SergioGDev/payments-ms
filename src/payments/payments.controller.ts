@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PaymentsService } from './payments.service';
 import { PaymentSessionDto } from './dto/payment-session.dto';
 import { Request, Response } from 'express';
@@ -7,8 +8,10 @@ import { Request, Response } from 'express';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('create-payment-session')
-  createPaymentSession(@Body() paymentSessionDto: PaymentSessionDto) {
+
+  // @Post('create-payment-session')
+  @MessagePattern('create.payment.session')
+  createPaymentSession(@Payload() paymentSessionDto: PaymentSessionDto ) {
     return this.paymentsService.createPaymentSession(paymentSessionDto);
   }
 
@@ -16,20 +19,25 @@ export class PaymentsController {
   success() {
     return {
       ok: true,
-      message: 'Payment successful',
-    };
+      message: 'Payment successful'
+    }
   }
 
   @Get('cancel')
   cancel() {
     return {
-      ok: true,
-      message: 'Payment cancelled',
-    };
+      ok: false,
+      message: 'Payment cancelled'
+    }
   }
+
 
   @Post('webhook')
   async stripeWebhook(@Req() req: Request, @Res() res: Response) {
     return this.paymentsService.stripeWebhook(req, res);
   }
+
+
+
+
 }
