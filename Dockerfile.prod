@@ -26,7 +26,6 @@ RUN npm run build
 
 # Eliminamos los node_modules que no sean de producción
 RUN npm ci -f --only=production && npm cache clean --force
-RUN npx prisma generate
 
 
 ####################################
